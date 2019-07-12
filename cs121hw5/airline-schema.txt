@@ -1,0 +1,52 @@
+-- Write the relational model schema for your airline database in this file, using
+the notation we have used all term.  You can indicate primary key columns by
+enclosing the attribute names in _ characters.  Include descriptions of other
+candidate keys or foreign keys (if any) immediately under each relation schema.
+Example:
+
+foo(_a_, b, c)
+ * b is also a candidate key
+ * c is a foreign key to bar.c
+
+--[Problem 4]
+-- tables
+-- include type_code in flight to ensure total participation in a one-to-many relationship-set
+-- flight.type_code is NOT NULL
+flight(_flight_no_, _flight_date_, flight_time, source_aprt, destination, domestic, type_code) * type_code is a foreign key to aircraft.type_code
+
+aircraft(_type_code_, company, model)
+
+seats(_type_code_, _ticket_id_, _seat_no_, class, seat_type, exit_row) * type_code is a foreign key to aircraft.type_code * ticket_id is a foreign key to ticket.ticket_id
+
+-- added customer_id to schema to ensure total participation in a one-to-many relationship-set
+-- customer_id is NOT NULL
+purchase(_purchase_id_, purchase_time, conf_number, customer_id)
+
+
+ * conf_number is a candidate key * customer_id is a foreign key to purchaser.customer_id
+
+customer(_customer_id_)
+
+traveler(_customer_id_, first_name, last_name, email, passport, citizenship, emerg_name, emerg_phone, frequent_flyer) * customer_id is a foreign key to customer.customer_id * passport is a candidate key * frequent_flyer is a candidate key
+
+purchaser(_customer_id_, first_name, last_name, email, card_no, exp_date, veri_code) * customer_id is a foreign key to customer.customer_id
+
+phone_num(_customer_id_, _phone_) * customer_id is a foreign key to customer.customer_id
+
+ticket(_ticket_id_, sale_price)
+
+-- relations
+flying(_flight_no_, _flight_date_, type_code) * flight_no is a foreign key to flight.flight_no * type_code is a foreign key to aircraft.type_code * flight_date is a foreign key to flight.date
+
+unique_r(_flight_no_, _flight_date_, _seat_no_, _ticket_id_) * flight_no is a foreign key to flight.flight_no * type_code is a foreign key to aircraft.type_code * flight_date is a foreign key to flight.date * seat_no is a foreign key to seats.seat_no * ticked_id is a candidate key
+
+flt_seat(_type_code_, _seat_no_) * type_code is a foreign key to aircraft.type_code * seat_no is a foreign key to seats.seat_no
+
+purchased(_purchase_id_, customer_id) * purchase_id is a foreign key to purchase * customer_id is a foreign key to purchaser
+
+associated(_customer_id_, _ticket_id_) * customer_id is a foreign key to traveler.customer_id * ticket_id is a foreign key to ticket.ticked_id
+
+tix(_purchase_id_, _ticket_id_) * purchase_id is a foreign key to purchase.purchase_id * ticked_id is a foreign key to ticket.ticked_id
+
+
+

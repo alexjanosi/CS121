@@ -1,0 +1,85 @@
+<html><head>
+<style>
+div.answer {
+    padding-left: 20pt;
+    padding-bottom: 12pt;
+}
+
+div.comment {
+    padding-left: 4pt;
+    padding-bottom: 12pt;
+}
+
+div.errors {
+    border: 1px solid red;
+    margin-top: 12pt;
+    margin-left: 4pt;
+    padding-left: 4pt;
+    color: red;
+    font-weight: bold;
+}
+
+.relvar {
+    font-style: italic;
+}
+
+.attr_name {
+    font-style: italic;
+}
+
+.group_operator {
+    font-family: Lucida Calligraphy;
+}
+
+.func_name {
+    font-weight: bold;
+}
+
+.operator {
+}
+
+.string {
+    color: #007F00;
+}
+
+.number {
+    color: #0000FF;
+}
+
+</style>
+</head><body>
+<h1>File:  division.txt</h1>
+<h2 id='Problem 1a'>Problem 1a</h2>
+<div class='comment'>
+The left side of the definition outputs all four names. Inside the right side
+of the equation, the cartesian product creates all the possible combinations of
+the names and the foods (apples, oranges, and bananas). The most right algebra
+projects the monkey_likes relation. Since the monkey_likes relation is being subtracted,
+it does not matter that tofu is included since it is not part of the cartesian product.
+Tofu is ignored, and the names projected are the ones that have all three of the food values.
+This is similar to how Anderson and Jackson are ignored on slide 17 of Lecture 2.
+</div>
+<h2 id='Problem 1b'>Problem 1b</h2>
+<div class='comment'>
+There are errors when I try to add "r DIVIDE[E] s" so I left it out.
+This formula takes all the names from regular divide, including the ones that have extra
+like tofu. Then, it subtracts the opposite of the regular divide. It takes monkey_likes and subtracts
+the cartesian product of the name and food. This ends with the names with extra values. It will then
+subtract the extra names from the names given from regular divide. If the name is in the output of
+regular divison, it will get rid of it. If the name is not, it is ignored.
+</div>
+<div class='answer'>
+(<span class='relvar'>r</span> &divide; <span class='relvar'>s</span>) - (&Pi;<sub><em>R</em> - <em>S</em></sub>(&Pi;<sub><em>R</em> - <em>S</em>, <em>S</em></sub>(<span class='relvar'>r</span>) - &Pi;<sub><em>R</em> - <em>S</em></sub>(<span class='relvar'>r</span>) &times; <span class='relvar'>s</span>))
+</div>
+<h2 id='Problem 1c'>Problem 1c</h2>
+<div class='comment'>
+The error checking code is being weird with r - s being before group so I wrote it differently
+This natural join eliminates all the random variables in R that are not in S. It then counts
+the number of values from S in R and compares that to the count in S. If they are the same,
+the identifier R - S is projected
+</div>
+<div class='answer'>
+&Pi;<sub><em>R</em> - <em>S</em></sub>(&sigma;<sub><span class='attr_name'>var1</span> <span class='operator'>=</span> <span class='attr_name'>var2</span></sub>(<sub><span class='attr_name'>rMINUSs</span></sub><span class='group_operator'>G</span><sub><span class='func_name'>count_distinct</span>(<span class='attr_name'>s</span>) <b>as</b> <em>var1</em></sub>(<span class='relvar'>r</span> &bowtie; <span class='relvar'>s</span>) &times; <sub><span class='attr_name'>s</span></sub><span class='group_operator'>G</span><sub><span class='func_name'>count_distinct</span>(<span class='attr_name'>s</span>) <b>as</b> <em>var2</em></sub>(<span class='relvar'>s</span>)))
+</div>
+</body>
+</html>

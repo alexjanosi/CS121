@@ -1,0 +1,120 @@
+-- [Problem 2.5a]
+
+-- Selects the tuples with First Bank Coportation and projects the person name
+PI[person_name](SIGMA[company_name = "First Bank Corporation"](works));
+
+
+
+-- [Problem 2.5b]
+
+-- In order to get city names, we have to natural join the tuples from part a with employee
+PI[person_name, city](employee BOWTIE (SIGMA[company_name = "First Bank Corporation"](works)));
+
+
+
+
+-- [Problem 2.5c]
+-- Same as b but include street and the salary condition
+PI[person_name, street, city](employee BOWTIE SIGMA[company_name = "First Bank Corporation" and salary > 10000](works));
+
+
+
+
+
+-- [Problem 2.5d]
+
+
+-- Projects the person name of the natural join of employee, works, and company
+-- This will result in the tuples where the cities overlap between employee and company
+PI[person_name](employees BOWTIE works BOWTIE company);
+
+-- [Problem 2.5e]
+
+
+-- We can use division to select companies with the same city
+PI[company_name](company DIVIDE (PI[city](SIGMA[company_name = "Small Bank Corporation"](company))));
+
+-- [Problem 2.6a]
+
+-- To rewrite the query, we must natural join customer as well to get the city of residence
+-- Jackson does not appear because there is no Jackson tuple in customer so it is excluded in the natural join
+PI[customer_name, customer_city, loan_number, amount](customer BOWTIE borrower BOWTIE loan);
+
+-- [Problem 2.6b]
+
+
+-- Keeping the same query, we can add a Jackson tuple into customer with either the missing data
+-- or null values if there is no actual values
+
+
+-- [Problem 2.6c]
+-- Using the outer join on the borrower and loan natural join will create null values for the
+-- customer attributes
+PI[customer_name, customer_city, loan_number, amount](customer RBOWTIE (borrower BOWTIE loan));
+
+
+-- [Problem 2.7a]
+
+-- must update work by multiplying certain employees' salaries and adding the rest
+
+works <- 
+PI[person_name, company_name, salary * 1.1]((SIGMA[company_name = "First Bank Corporation"](works)) UNION (works MINUS SIGMA[company_name = "First Bank Corporation"](works)));
+
+-- [Problem 2.7b]
+
+-- We must first match manager name with person name in works. Then, we can manipulate the data
+temp1 <- PI[works.person_name, company_name, salary](SIGMA[works.person_name = manager](works CROSS manages));
+works <- (works MINUS temp1) UNION ((PI[works.person_name, company_name, salary * 1.1](SIGMA[temp1.salary * 1.1 <= 100000](temp1))) UNION (PI[works.person_name, company_name, salary * 1.03](SIGMA[temp1.salary * 1.1 > 100000](temp1))));
+
+-- [Problem 2.7c]
+
+
+-- simply select work tuples with the name and get rid of them
+
+works <- works MINUS SIGMA[company_name = "Small Bank Coporation"](works)
+;
+
+
+-- [Problem 2.8a]
+-- We can use an aggregate function to count the number of names per account in depositor
+temp2 <- [account_number]GROUP[count(customer_name)](depositor);
+PI[account_number](SIGMA[num_account > 2](RHO[account_number, num_account](temp2)));
+
+
+-- [Problem 2.8b]
+
+-- We can use renaming to create 3 instances of depositor to company same numbers with different names
+-- This can be used to see when there are more than 2 names for the same ID
+temp3 <- 
+RHO[inst1](depositor) CROSS RHO[inst2](depositor) CROSS RHO[inst3](depositor);
+temp4 <- SIGMA[
+inst1.account_number = inst2.account_number and inst1.account_number = inst3.account_number and inst2.account_number = inst3.account_number](temp3);
+PI[inst1.customer_name](SIGMA[inst1.customer_name != inst2.customer_name and inst1.customer_name != inst3.customer_name and inst2.customer_name != inst3.customer_name](temp4));
+
+-- [Problem 2.9a]
+-- First, counts the employees in each company. Then, compares each value and chooses names where
+-- employee amount is small. Then subtract, the fewer amounts to get the biggest amount
+temp5 <- [company_name]GROUP[count(person_name) as var1](works);
+temp6 <- PI[company_name](SIGMA[temp5.var1 < test.var1](temp5 CROSS RHO[test](temp5)));
+PI[company_name](works) MINUS temp6; 
+
+-- [Problem 2.9b]
+
+-- Similar to part a except with different values
+temp7 <- [company_name]GROUP[sum(salary) as var2](works);
+temp8 <- PI[company_name](SIGMA[temp7.var2 > test2.var2](temp7 CROSS RHO[test2](temp7)));
+PI[company_name](works) MINUS temp8;
+
+
+
+
+
+-- [Problem 2.9c]
+
+-- Similar to other parts but must include condition that one name must be First Bank
+temp9 <-
+
+
+ [company_name]GROUP[avg(salary) as var3](works);
+temp10 <- PI[company_name](SIGMA[temp9.company_name = "First Bank Corporation" and temp9.var3 < test3.var3](temp9 CROSS RHO[test3](temp9)));
+PI[company_name](works) MINUS temp10;

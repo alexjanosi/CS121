@@ -1,0 +1,48 @@
+-- [Problem 4a]
+For the sake of showing work, I will change 
+the relation to { A, B, C, D, E, F, G, H }
+I include F since there is no need to create a cover (no confusion)
+We have { A, B, C, D, E, F, G, H }
+Take out C -> DE
+{ A, B, C, F, G, H }
+Take out A -> CB
+{ A, F, G, H }
+Take out F -> AG
+{F, H} which is the MVD
+
+Our 4NF is:
+R0{*cust_id*, cust_address, cust_phone } where cust_id is primary key
+R1{*order_id*, cust_id, order_time } where order_id is primary
+and cust_id is a foreign key to R0{ cust_id }
+R2{*pizza_id*, order_id, pizza_size } where pizza_id is primary key
+and order_id is a foriegn key to R1{ order_id }
+R3{ pizza_id, topping } where the entire relation is the candidate key
+and pizza_id is a foreign key to R2{ pizza_id }
+
+
+
+
+
+-- [Problem 4b]
+
+
+
+
+Yes, it is possible to create a version in BCNF but not 4NF.
+To do so, we need to show that FH is a candidate key:
+{FH}+ = {FH} and F -> AG and A -> CB and C -> DE
+Thus, {FH}+ = {ABCDEFGH}
+{F}+ = {ABCDEFG}
+{H}+ = {H}
+Thus, FH is a candidate key
+
+We can then create the BCNF schema:
+R0{*cust_id*, cust_address, cust_phone } where cust_id is primary key
+R1{*order_id*, cust_id, order_time } where order_id is primary
+and cust_id is a foreign key to R0{ cust_id }
+R2{*pizza_id*, *topping*, order_id, pizza_size } where pizza_id, topping
+is primary key and order_id is a foriegn key to R1{ order_id }
+
+By adding topping to the second relation, it is in BCNF since pizza_id,
+topping is a candidate key. However, it is not in 4NF since there
+is redundancy with the MVDs.

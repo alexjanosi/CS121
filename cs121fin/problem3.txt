@@ -1,0 +1,38 @@
+-- [Problem 3a]
+We can see that AI is a superkey through its attribute closure:
+{AI}+ = {AI} and A -> G and A -> B
+{AI}+ = {ABGI} and BI -> C and AG -> H
+{AI}+ = {ABCGHI}
+Thus, AI is a superkey.
+To show it is a candidate key, we must take attribute closure of subsets:
+{A}+ = A and A -> B and A -> G
+{A}+ = {ABG} and AG -> H
+{A}+ = {ABGH}
+{I}+ = I
+Thus, the subsets do not make up all of R.
+Therefore, AI is a candidate key for R.
+
+
+-- [Problem 3b]
+
+F = { A -> B, BI -> C, AG -> H, G -> BH, A -> G }
+A -> B is extraneous since A -> G and G -> BH, thus A -> B by Transitivity
+Fc = { BI -> C, AG -> H, G -> BH, A -> G }
+The G in AG -> H is extraneous since G -> BH means G -> H by Decomposition
+Fc = { BI -> C, A -> H, G -> BH, A -> G }
+A -> H is extraneous since A -> G and G -> H (Decomposition/Transitivity)
+Fc = { BI -> C, G -> BH, A -> G }
+
+
+
+-- [Problem 3c]
+
+
+
+Using the cover from part b and the candidate key, we can easily create a 3NF:
+R0(*A*, G) where A is the primary key since A -> G
+R1(*G*, B, H) where G is a primary key since G -> BH
+and G is foreign key to R0(G)
+R2(*B*, *I*, C) where BI is a primary key since BI -> C 
+and B is foreign key to R1(B)
+R3(A, I) where AI is a candidate key

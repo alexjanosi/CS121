@@ -1,0 +1,90 @@
+<html><head>
+<style>
+div.answer {
+    padding-left: 20pt;
+    padding-bottom: 12pt;
+}
+
+div.comment {
+    padding-left: 4pt;
+    padding-bottom: 12pt;
+}
+
+div.errors {
+    border: 1px solid red;
+    margin-top: 12pt;
+    margin-left: 4pt;
+    padding-left: 4pt;
+    color: red;
+    font-weight: bold;
+}
+
+.relvar {
+    font-style: italic;
+}
+
+.attr_name {
+    font-style: italic;
+}
+
+.group_operator {
+    font-family: Lucida Calligraphy;
+}
+
+.func_name {
+    font-weight: bold;
+}
+
+.operator {
+}
+
+.string {
+    color: #007F00;
+}
+
+.number {
+    color: #0000FF;
+}
+
+</style>
+</head><body>
+<h1>File:  equivalence.txt</h1>
+<h2 id='Problem 1a'>Problem 1a</h2>
+<div class='comment'>
+Equivalent. This is equivalent because the order does not matter between the grouping and
+selecting since theta and A have the same attributes. If the grouping is done first, the
+selecting chooses from the grouped attributes. If the selecting is done first, the grouping
+is just done on that subset. Either way, the result is grouped table with the attributes of A.
+</div>
+<h2 id='Problem 1b'>Problem 1b</h2>
+<div class='comment'>
+Not Equivalent. This is not equivalent since the left equation relies on a tuple while the
+right equation just relies on the attribute A. If R had a tuple and S had the same value for
+A but not B, the left equation would ouput the value under A in R, and the right side would output nothing.
+</div>
+<h2 id='Problem 1c'>Problem 1c</h2>
+<div class='comment'>
+Not Equivalent. There will be different values for the values under attribute a in R given on how you order
+the natural joins. Imagine R has values 1 and 2 under a, S has 1 and 3 under a, and t has 1 and 2 under a. The
+left equation will include an extra value at a = 2, b3 since it left joins to r which has a common value as t. Since the
+right equation left joins to s, that extra value will end up being a null at the end. It differents based on the values
+under attribute a.
+</div>
+<h2 id='Problem 1d'>Problem 1d</h2>
+<div class='comment'>
+Equivalent. Since theta is only attributes from r, it does not matter the order of the natural
+join and the selecting. If the natural join is done first, a relation is made with values in the
+attributes of theta either from s or nulls. These values are then selected. If the select is done first,
+the attributes of theta are chosen and the natural join either adds the values from s or null values. The
+result is a relation with the attributes of theta with either values from s or null values.
+</div>
+<h2 id='Problem 1e'>Problem 1e</h2>
+<div class='comment'>
+Not Equivalent. The left equation will give empty relations while the right value will give all the attributes
+of r with null values. Say r has some unique attributes, r and s have some shared attributes, and s has some unique
+attributes. The left equation natural join will contain attributes only contained in r, so the select (which
+chooses unique attributes from s) will select nothing. The right equation will select values only in s, so they will not
+appear in the natural join. Thus, the output will just be r with additional null values.
+</div>
+</body>
+</html>

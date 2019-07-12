@@ -1,0 +1,71 @@
+-- [Problem 1]
+-- first counts the max number of ids to check with
+-- then selects names and ids that match that number
+temp <- GROUP[count(type_id) as total](game_type);
+temp4 <- [person_id, person_name]GROUP[count_distinct(type_id) as counted](geezer BOWTIE game_score BOWTIE game);
+PI[person_id, person_name](SIGMA[temp4.counted = temp.total](temp4));
+
+-- [Problem 2]
+
+
+
+
+-- counts the number of residents that have played the game distinctly creating a query with attributes (game_id, people)
+-- then creates a query by joining the game ID and count with the type ID and name
+temp5 <- [game_id]GROUP[count_distinct(person_id) as people](game BOWTIE game_score);
+PI[game_id, type_id, type_name, people](game_type BOWTIE game BOWTIE temp5);
+
+-- [Problem 3]
+
+
+-- first stores the type_id and game_id's related to pinochle
+-- then removes all tuples from game_type, game, and game_score with either of these
+temp2 <- PI[type_id](SIGMA[type_name = "pinochle"](game_type));
+temp3 <- PI[game_id](SIGMA[type_id = temp2](game));
+
+game_score <- game_score MINUS SIGMA[game_id = temp3](game_score);
+game <- game MINUS SIGMA[game_id = temp3](game);
+game_type <- game_type MINUS SIGMA[type_id = temp2](game_type);
+
+
+
+-- [Problem 4]
+
+-- first stores the person_id of Tedd Codd
+-- then updates game_score to add 30 to all scores with the person_id UNION the rest of game_score
+temp1 <- PI[person_id](SIGMA[person_name = "Tedd Codd"](geezer));
+game_score <- PI[game_id, person_id, score + 30](SIGMA[person_id = temp1](game_score)) UNION SIGMA[person_id != temp1](game_score);
+ 
+
+-- [Problem 5]
+
+-- creates a variable for the max game id and type_id, then updates accordingly
+-- have to cross the tuples since a variable is used
+maxgameid <- GROUP[max(game_id) + 1](game_score);
+typevariable <- PI[type_id](SIGMA[type_name = "dominoes"](game_type));
+game_score <- game_score UNION maxgameid CROSS {(987, 332)};
+game_score <- game_score UNION maxgameid CROSS {(227, 457)};
+game <- game UNION maxgameid CROSS typevariable CROSS {("2000-04-12 15:30:00")};
+
+-- [Problem 6]
+-- creates a variable with game_id, type_id, and number of players per game
+-- consider the case with a max and min, no max, and no records in game_score then UNION
+temp6 <- [game_id]GROUP[count(person_id) as people](game_score) BOWTIE PI[game_id, type_id](game);
+temp7 <- PI[game_id](SIGMA[people < min_players OR people > max_players](SIGMA[max_players != NULL](game_type) BOWTIE temp6));
+temp8 <- PI[game_id](SIGMA[people < min_players](SIGMA[max_players = NULL](game_type) BOWTIE temp6));
+temp9 <- PI[game_id](game_score) MINUS PI[game_id](game);
+temp7 UNION temp8 UNION temp9;
+
+
+
+
+-- [Problem 7]
+
+
+
+
+-- counts the amount of times a person played the game, then finds the max of that count to have the max per game
+-- Then, finds the max of each type from the games within each type
+countpergame <- [game_id, person_id]GROUP[count(score) as num_times](game_score) BOWTIE PI[game_id, type_id](game);
+countpertype <- [type_id]GROUP[max(num_times) as num_times](countpergame) BOWTIE PI[type_id, type_name](game_type);
+countpertype BOWTIE PI[person_id, type_id, num_times](countpergame) BOWTIE PI[person_id, person_name](geezer);

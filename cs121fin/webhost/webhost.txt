@@ -1,0 +1,32 @@
+customer(*username*, *website_url*, email, opened_account, monthly_price)
+
+preferred(*username*, *website_url*, type) *username and website_url are 
+foreign key to customer(username, website_url) and type = "p"
+
+basic(*username*, *website_url*, type) *username and website_url are 
+foreign key to customer(username, website_url) and type = "b"
+
+server(*hostname*, op_sys)
+
+dedicated(*hostname*, hostable) *hostname is a foreign key 
+to server(hostname) and hostable = 1
+
+shared(*hostname*, hostable) *hostname is a foreign key 
+to server(hostname) and hostable > 1
+
+software(*pkg_name*, *version*, description, price)
+
+public(*username*, *website_url*, hostname) * username, website_url 
+is foreign key to basic(username, website_url) and hostname 
+is foreign key to shared(hostname)
+
+private(*username*, *website_url*, hostname) * username, website_url 
+is foreign key to preferred(username, website_url) and 
+hostname is a candidate key and a foreign key to dedicated(hostname)
+
+owns(username, website_url, pkg_name) * username, website_url 
+is foreign key to customer(username, website_url) and pkg_name 
+is a foreign key to software(pkg_name)
+
+installed(pkg_name, hostname) * pkg_name is foreign key 
+to software(pkg_name) and hostname is foreign key to server(hostname)

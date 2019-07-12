@@ -1,0 +1,109 @@
+<html><head>
+<style>
+div.answer {
+    padding-left: 20pt;
+    padding-bottom: 12pt;
+}
+
+div.comment {
+    padding-left: 4pt;
+    padding-bottom: 12pt;
+}
+
+div.errors {
+    border: 1px solid red;
+    margin-top: 12pt;
+    margin-left: 4pt;
+    padding-left: 4pt;
+    color: red;
+    font-weight: bold;
+}
+
+.relvar {
+    font-style: italic;
+}
+
+.attr_name {
+    font-style: italic;
+}
+
+.group_operator {
+    font-family: Lucida Calligraphy;
+}
+
+.func_name {
+    font-weight: bold;
+}
+
+.operator {
+}
+
+.string {
+    color: #007F00;
+}
+
+.number {
+    color: #0000FF;
+}
+
+</style>
+</head><body>
+<h1>File:  game-relalg.txt</h1>
+<h2 id='Problem 1'>Problem 1</h2>
+<div class='comment'>
+first counts the max number of ids to check with
+then selects names and ids that match that number
+</div>
+<div class='answer'>
+<em>temp</em> &larr; <sub></sub><span class='group_operator'>G</span><sub><span class='func_name'>count</span>(<span class='attr_name'>type_id</span>) <b>as</b> <em>total</em></sub>(<span class='relvar'>game_type</span>)<br /><em>temp4</em> &larr; <sub><span class='attr_name'>person_id</span>, <span class='attr_name'>person_name</span></sub><span class='group_operator'>G</span><sub><span class='func_name'>count_distinct</span>(<span class='attr_name'>type_id</span>) <b>as</b> <em>counted</em></sub>(<span class='relvar'>geezer</span> &bowtie; <span class='relvar'>game_score</span> &bowtie; <span class='relvar'>game</span>)<br />&Pi;<sub><span class='attr_name'>person_id</span>, <span class='attr_name'>person_name</span></sub>(&sigma;<sub><span class='attr_name'>temp4</span>.<span class='attr_name'>counted</span> <span class='operator'>=</span> <span class='attr_name'>temp</span>.<span class='attr_name'>total</span></sub>(<span class='relvar'>temp4</span>))
+</div>
+<h2 id='Problem 2'>Problem 2</h2>
+<div class='comment'>
+counts the number of residents that have played the game distinctly creating a query with attributes (game_id, people)
+then creates a query by joining the game ID and count with the type ID and name
+</div>
+<div class='answer'>
+<em>temp5</em> &larr; <sub><span class='attr_name'>game_id</span></sub><span class='group_operator'>G</span><sub><span class='func_name'>count_distinct</span>(<span class='attr_name'>person_id</span>) <b>as</b> <em>people</em></sub>(<span class='relvar'>game</span> &bowtie; <span class='relvar'>game_score</span>)<br />&Pi;<sub><span class='attr_name'>game_id</span>, <span class='attr_name'>type_id</span>, <span class='attr_name'>type_name</span>, <span class='attr_name'>people</span></sub>(<span class='relvar'>game_type</span> &bowtie; <span class='relvar'>game</span> &bowtie; <span class='relvar'>temp5</span>)
+</div>
+<h2 id='Problem 3'>Problem 3</h2>
+<div class='comment'>
+first stores the type_id and game_id's related to pinochle
+then removes all tuples from game_type, game, and game_score with either of these
+</div>
+<div class='answer'>
+<em>temp2</em> &larr; &Pi;<sub><span class='attr_name'>type_id</span></sub>(&sigma;<sub><span class='attr_name'>type_name</span> <span class='operator'>=</span> <span class='string'>"pinochle"</span></sub>(<span class='relvar'>game_type</span>))<br /><em>temp3</em> &larr; &Pi;<sub><span class='attr_name'>game_id</span></sub>(&sigma;<sub><span class='attr_name'>type_id</span> <span class='operator'>=</span> <span class='attr_name'>temp2</span></sub>(<span class='relvar'>game</span>))<br /><em>game_score</em> &larr; <span class='relvar'>game_score</span> - &sigma;<sub><span class='attr_name'>game_id</span> <span class='operator'>=</span> <span class='attr_name'>temp3</span></sub>(<span class='relvar'>game_score</span>)<br /><em>game</em> &larr; <span class='relvar'>game</span> - &sigma;<sub><span class='attr_name'>game_id</span> <span class='operator'>=</span> <span class='attr_name'>temp3</span></sub>(<span class='relvar'>game</span>)<br /><em>game_type</em> &larr; <span class='relvar'>game_type</span> - &sigma;<sub><span class='attr_name'>type_id</span> <span class='operator'>=</span> <span class='attr_name'>temp2</span></sub>(<span class='relvar'>game_type</span>)
+</div>
+<h2 id='Problem 4'>Problem 4</h2>
+<div class='comment'>
+first stores the person_id of Tedd Codd
+then updates game_score to add 30 to all scores with the person_id UNION the rest of game_score
+</div>
+<div class='answer'>
+<em>temp1</em> &larr; &Pi;<sub><span class='attr_name'>person_id</span></sub>(&sigma;<sub><span class='attr_name'>person_name</span> <span class='operator'>=</span> <span class='string'>"Tedd Codd"</span></sub>(<span class='relvar'>geezer</span>))<br /><em>game_score</em> &larr; &Pi;<sub><span class='attr_name'>game_id</span>, <span class='attr_name'>person_id</span>, <span class='attr_name'>score</span> + <span class='number'>30</span></sub>(&sigma;<sub><span class='attr_name'>person_id</span> <span class='operator'>=</span> <span class='attr_name'>temp1</span></sub>(<span class='relvar'>game_score</span>)) &cup; &sigma;<sub><span class='attr_name'>person_id</span> <span class='operator'>&ne;</span> <span class='attr_name'>temp1</span></sub>(<span class='relvar'>game_score</span>)
+</div>
+<h2 id='Problem 5'>Problem 5</h2>
+<div class='comment'>
+creates a variable for the max game id and type_id, then updates accordingly
+have to cross the tuples since a variable is used
+</div>
+<div class='answer'>
+<em>maxgameid</em> &larr; <sub></sub><span class='group_operator'>G</span><sub><span class='func_name'>max</span>(<span class='attr_name'>game_id</span>) + <span class='number'>1</span></sub>(<span class='relvar'>game_score</span>)<br /><em>typevariable</em> &larr; &Pi;<sub><span class='attr_name'>type_id</span></sub>(&sigma;<sub><span class='attr_name'>type_name</span> <span class='operator'>=</span> <span class='string'>"dominoes"</span></sub>(<span class='relvar'>game_type</span>))<br /><em>game_score</em> &larr; <span class='relvar'>game_score</span> &cup; <span class='relvar'>maxgameid</span> &times; {(<span class='number'>987</span>, <span class='number'>332</span>)}<br /><em>game_score</em> &larr; <span class='relvar'>game_score</span> &cup; <span class='relvar'>maxgameid</span> &times; {(<span class='number'>227</span>, <span class='number'>457</span>)}<br /><em>game</em> &larr; <span class='relvar'>game</span> &cup; <span class='relvar'>maxgameid</span> &times; <span class='relvar'>typevariable</span> &times; {(<span class='string'>"2000-04-12 15:30:00"</span>)}
+</div>
+<h2 id='Problem 6'>Problem 6</h2>
+<div class='comment'>
+creates a variable with game_id, type_id, and number of players per game
+consider the case with a max and min, no max, and no records in game_score then UNION
+</div>
+<div class='answer'>
+<em>temp6</em> &larr; <sub><span class='attr_name'>game_id</span></sub><span class='group_operator'>G</span><sub><span class='func_name'>count</span>(<span class='attr_name'>person_id</span>) <b>as</b> <em>people</em></sub>(<span class='relvar'>game_score</span>) &bowtie; &Pi;<sub><span class='attr_name'>game_id</span>, <span class='attr_name'>type_id</span></sub>(<span class='relvar'>game</span>)<br /><em>temp7</em> &larr; &Pi;<sub><span class='attr_name'>game_id</span></sub>(&sigma;<sub><span class='attr_name'>people</span> <span class='operator'>&lt;</span> <span class='attr_name'>min_players</span> &or; <span class='attr_name'>people</span> <span class='operator'>&gt;</span> <span class='attr_name'>max_players</span></sub>(&sigma;<sub><span class='attr_name'>max_players</span> <span class='operator'>&ne;</span> <span class='null'>null</span></sub>(<span class='relvar'>game_type</span>) &bowtie; <span class='relvar'>temp6</span>))<br /><em>temp8</em> &larr; &Pi;<sub><span class='attr_name'>game_id</span></sub>(&sigma;<sub><span class='attr_name'>people</span> <span class='operator'>&lt;</span> <span class='attr_name'>min_players</span></sub>(&sigma;<sub><span class='attr_name'>max_players</span> <span class='operator'>=</span> <span class='null'>null</span></sub>(<span class='relvar'>game_type</span>) &bowtie; <span class='relvar'>temp6</span>))<br /><em>temp9</em> &larr; &Pi;<sub><span class='attr_name'>game_id</span></sub>(<span class='relvar'>game_score</span>) - &Pi;<sub><span class='attr_name'>game_id</span></sub>(<span class='relvar'>game</span>)<br /><span class='relvar'>temp7</span> &cup; <span class='relvar'>temp8</span> &cup; <span class='relvar'>temp9</span>
+</div>
+<h2 id='Problem 7'>Problem 7</h2>
+<div class='comment'>
+counts the amount of times a person played the game, then finds the max of that count to have the max per game
+Then, finds the max of each type from the games within each type
+</div>
+<div class='answer'>
+<em>countpergame</em> &larr; <sub><span class='attr_name'>game_id</span>, <span class='attr_name'>person_id</span></sub><span class='group_operator'>G</span><sub><span class='func_name'>count</span>(<span class='attr_name'>score</span>) <b>as</b> <em>num_times</em></sub>(<span class='relvar'>game_score</span>) &bowtie; &Pi;<sub><span class='attr_name'>game_id</span>, <span class='attr_name'>type_id</span></sub>(<span class='relvar'>game</span>)<br /><em>countpertype</em> &larr; <sub><span class='attr_name'>type_id</span></sub><span class='group_operator'>G</span><sub><span class='func_name'>max</span>(<span class='attr_name'>num_times</span>) <b>as</b> <em>num_times</em></sub>(<span class='relvar'>countpergame</span>) &bowtie; &Pi;<sub><span class='attr_name'>type_id</span>, <span class='attr_name'>type_name</span></sub>(<span class='relvar'>game_type</span>)<br /><span class='relvar'>countpertype</span> &bowtie; &Pi;<sub><span class='attr_name'>person_id</span>, <span class='attr_name'>type_id</span>, <span class='attr_name'>num_times</span></sub>(<span class='relvar'>countpergame</span>) &bowtie; &Pi;<sub><span class='attr_name'>person_id</span>, <span class='attr_name'>person_name</span></sub>(<span class='relvar'>geezer</span>)
+</div>
+</body>
+</html>
